@@ -1,5 +1,12 @@
 package com.lunova.plugin;
 
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import java.io.IOException; 
+
+
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.lunova.moonbot.core.Constants;
 import com.lunova.moonbot.core.service.Service;
@@ -8,6 +15,10 @@ import com.lunova.moonbot.core.service.executors.DefaultUncaughtExceptionHandler
 import com.lunova.moonbot.core.service.executors.ServiceExecutor;
 import com.lunova.moonbot.core.service.executors.ServiceExecutor;
 import com.lunova.moonbot.core.service.executors.ThreadFactoryConfig;
+
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +26,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.io.IOException;
 import java.util.Optional;
 
 @ServiceInfo(name = "StackOverflowService", critical = false, disabled = false)
@@ -50,6 +62,39 @@ public class StackOverflowService extends Service<ServiceExecutor> {
         }
         return Optional.of(key);
     }
-        //add methods to interact with Stack Overflow API
+       public Optional<String> getQuestions(String query) {
+        if (apiKey.isEmpty()) {
+            LOGGER.warn("API key is not available. Cannot retrieve questions.");
+            return Optional.empty();
+        }
+        if (query == null || query.trim().isEmpty()) {
+            LOGGER.warn("Query is empty. Cannot retrieve questions.");
+            return Optional.empty();
+        }
+        try {
+           HttpUrl.Builder urlBuilder = HttpUrl.parse(Constants.STACK_EXCHANGE_API_BASE_URL + "/questions").newBuilder();
+            urlBuilder.addQueryParameter("order", "desc");
+            urlBuilder.addQueryParameter("sort", "votes");
+            urlBuilder.addQueryParameter("tagged", query); // Use the user's query here
+            urlBuilder.addQueryParameter("site", "stackoverflow");
+            urlBuilder.addQueryParameter("key", apiKey.get()); 
+
+            Request request = new Request.Builder()
+                .url(urlBuilder.build())
+                .build();
+
+            OkHttpClient client = new OkHttpClient();
+            Response response = client.newCall(request).execute();
+
+            if (!response.isSuccessful()) {
+                throw new IOException("Unexpected response code: " + response);
+            }
+
+            return Optional.of(response.body().string());
+        } catch (IOException e) {
+            LOGGER.error("Failed to retrieve questions from Stack Overflow.", e);
+            return Optional.empty();
+        }
+       } //add methods to interact with Stack Overflow API
         //retrieve questions, answers, etc.
     }

@@ -47,6 +47,7 @@ open module com.lunova.moonbot.core {
     requires org.eclipse.jetty.http;
     requires org.eclipse.jetty.ee10.servlet;
     requires jakarta.servlet;
+    requires okhttp3;
 
     // Exports
     exports com.lunova.moonbot.core;
@@ -85,3 +86,4 @@ opens com.lunova.moonbot.core.api.plugin.features.settings.validation to jakarta
 opens com.lunova.moonbot.core.api.plugin.features.settings.input to com.fasterxml.jackson.databind, com.google.gson, jakarta.xml.bind;
 opens com.lunova.moonbot.core.api.plugin.features.settings.input.impl to com.fasterxml.jackson.databind, com.google.gson, jakarta.xml.bind;*/
 }
+
