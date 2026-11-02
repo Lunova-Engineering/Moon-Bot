@@ -5,5 +5,6 @@ module com.lunova.moonbot.plugin.base {
   requires ch.qos.logback.core;
   requires com.google.common;
   requires com.lunova.moonbot.core;
-  requires annotations;
+  requires annotations;  
+  requires okhttp3;
 }

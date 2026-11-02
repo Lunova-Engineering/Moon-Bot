@@ -27,4 +27,6 @@ public final class Constants {
     public static final Path LOGS_PATH = Paths.get(CORE_DATA_PATH.toString(), "logs");
 
     public static final ThreadFactory DEFAULT_THREAD_FACTORY = Executors.defaultThreadFactory();
+
+    public static final String STACK_EXCHANGE_API_BASE_URL = "https://api.stackexchange.com/2.3";
 }
